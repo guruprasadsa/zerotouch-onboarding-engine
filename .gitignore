@@ -1,0 +1,28 @@
+# --- Python Basics ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Virtual Environment (CRITICAL) ---
+venv/
+.venv/
+env/
+dist/
+build/
+*.egg-info/
+
+# --- IDE Settings ---
+.vscode/
+.idea/
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+
+# --- Project Specific ---
+*.log
+temp/
+
+# --- Environment Variables ---
+.env

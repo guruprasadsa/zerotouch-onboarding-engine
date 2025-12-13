@@ -1,0 +1,21 @@
+# --- Core Processing ---
+
+opencv-python-headless==4.10.0.84
+pytesseract==0.3.10
+pdf2image==1.17.0
+pymupdf==1.24.5
+spacy==3.7.5
+pandas==2.2.2
+numpy==1.26.4
+Pillow==10.3.0
+
+# --- API & Web ---
+fastapi==0.111.0
+python-multipart==0.0.9
+uvicorn==0.30.1
+
+# --- Testing ---
+pytest==8.2.2
+httpx==0.27.0
+
+#most up-to-date for python 3.12 compatibility as of December 2025
