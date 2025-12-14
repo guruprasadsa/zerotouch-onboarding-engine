@@ -1,0 +1,92 @@
+[
+  {
+    "file": "bank_01.png",
+    "document_type": "CANCELLED CHEQUE",
+    "bank_name": "HDFC BANK",
+    "account_holder": "NIMRAT DATE",
+    "account_number": "523450139766",
+    "ifsc": "HDFC0043337",
+    "branch": "PATIALA"
+  },
+  {
+    "file": "bank_02.png",
+    "document_type": "BANK CERTIFICATE",
+    "bank_name": "ICICI BANK",
+    "account_holder": "LAKSHMI LOYAL",
+    "account_number": "843126436827",
+    "ifsc": "ICIC0906172",
+    "branch": "AMBATTUR"
+  },
+  {
+    "file": "bank_03.png",
+    "document_type": "CANCELLED CHEQUE",
+    "bank_name": "AXIS BANK",
+    "account_holder": "ATI DAYAL",
+    "account_number": "974237418835",
+    "ifsc": "UTIB0052826",
+    "branch": "HAZARIBAGH"
+  },
+  {
+    "file": "bank_04.png",
+    "document_type": "BANK CERTIFICATE",
+    "bank_name": "CANARA BANK",
+    "account_holder": "NEEL SOMAN",
+    "account_number": "387595576298",
+    "ifsc": "CNRB0211420",
+    "branch": "RAMPUR"
+  },
+  {
+    "file": "bank_05.png",
+    "document_type": "CANCELLED CHEQUE",
+    "bank_name": "PUNJAB NATIONAL BANK",
+    "account_holder": "RIDHI BALASUBRAMANIAN",
+    "account_number": "150107829139",
+    "ifsc": "PUNB0989511",
+    "branch": "KURNOOL"
+  },
+  {
+    "file": "bank_06.png",
+    "document_type": "BANK CERTIFICATE",
+    "bank_name": "BANK OF BARODA",
+    "account_holder": "FINN CHAD",
+    "account_number": "285466123127",
+    "ifsc": "BARB0482179",
+    "branch": "BHIND"
+  },
+  {
+    "file": "bank_07.png",
+    "document_type": "CANCELLED CHEQUE",
+    "bank_name": "KOTAK MAHINDRA BANK",
+    "account_holder": "DAVID BATH",
+    "account_number": "341493102768",
+    "ifsc": "KKBK0929340",
+    "branch": "MANGO"
+  },
+  {
+    "file": "bank_08.png",
+    "document_type": "BANK CERTIFICATE",
+    "bank_name": "INDUSIND BANK",
+    "account_holder": "NAVEEN BARMAN",
+    "account_number": "660106422845",
+    "ifsc": "INDB0889681",
+    "branch": "HAPUR"
+  },
+  {
+    "file": "bank_09.png",
+    "document_type": "CANCELLED CHEQUE",
+    "bank_name": "YES BANK",
+    "account_holder": "GIRISH MITRA",
+    "account_number": "406872723016",
+    "ifsc": "YESB0273778",
+    "branch": "SOLAPUR"
+  },
+  {
+    "file": "bank_10.png",
+    "document_type": "BANK CERTIFICATE",
+    "bank_name": "STATE BANK OF INDIA",
+    "account_holder": "QUINCY HARI",
+    "account_number": "345491613487",
+    "ifsc": "SBIN0139249",
+    "branch": "AURANGABAD"
+  }
+]

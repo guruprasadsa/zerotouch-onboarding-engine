@@ -1,7 +1,6 @@
 # --- Core Processing ---
-
 opencv-python-headless==4.10.0.84
-pytesseract==0.3.10
+easyocr==1.7.1
 pdf2image==1.17.0
 pymupdf==1.24.5
 spacy==3.7.5
@@ -17,5 +16,3 @@ uvicorn==0.30.1
 # --- Testing ---
 pytest==8.2.2
 httpx==0.27.0
-
-#most up-to-date for python 3.12 compatibility as of December 2025

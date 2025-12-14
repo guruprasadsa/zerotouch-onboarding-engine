@@ -1,28 +1,35 @@
-# --- Python Basics ---
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
 
-# --- Virtual Environment (CRITICAL) ---
-venv/
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.so
+
+# --- Virtual Environment ---
 .venv/
-env/
-dist/
+venv/
+
+# --- Distribution ---
 build/
+dist/
 *.egg-info/
 
-# --- IDE Settings ---
+# --- Testing ---
+.pytest_cache/
+
+# --- IDE ---
 .vscode/
 .idea/
 
-# --- Operating System Files ---
+# --- OS ---
 .DS_Store
 Thumbs.db
 
-# --- Project Specific ---
-*.log
-temp/
-
 # --- Environment Variables ---
 .env
+
+# --- Logs ---
+*.log
+
+# --- Temporary ---
+temp/
+*.tmp
