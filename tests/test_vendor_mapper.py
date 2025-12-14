@@ -11,9 +11,6 @@ from src.integration.vendor_mapper import VendorMapper
 from src.core.vendor_model import Vendor, BankDetails
 
 
-# --------------------------------------------------
-# Fixtures
-# --------------------------------------------------
 @pytest.fixture
 def mapper():
     """Create a VendorMapper instance."""
@@ -74,9 +71,6 @@ def failed_extraction_result():
     }
 
 
-# --------------------------------------------------
-# Test: Basic Mapping
-# --------------------------------------------------
 class TestBasicMapping:
     """Tests for basic mapping functionality."""
     
@@ -115,10 +109,6 @@ class TestBasicMapping:
         vendor = mapper.map_from_extraction(failed_extraction_result)
         assert vendor is None
 
-
-# --------------------------------------------------
-# Test: Confidence Score Calculation
-# --------------------------------------------------
 class TestConfidenceScore:
     """Tests for aggregate confidence score calculation."""
     
@@ -143,10 +133,6 @@ class TestConfidenceScore:
         vendor = mapper.map_from_extraction(high_confidence_result)
         assert vendor.confidence_score > 0.9
 
-
-# --------------------------------------------------
-# Test: Missing Fields Handling
-# --------------------------------------------------
 class TestMissingFields:
     """Tests for graceful handling of missing fields."""
     
@@ -197,10 +183,6 @@ class TestMissingFields:
         vendor = mapper.map_from_extraction(result)
         assert vendor is None
 
-
-# --------------------------------------------------
-# Test: Data Normalization
-# --------------------------------------------------
 class TestDataNormalization:
     """Tests for data normalization during mapping."""
     
@@ -247,9 +229,6 @@ class TestDataNormalization:
         assert vendor.bank_details.ifsc_code == "HDFC0001234"
 
 
-# --------------------------------------------------
-# Test: Batch Mapping
-# --------------------------------------------------
 class TestBatchMapping:
     """Tests for batch mapping functionality."""
     
@@ -278,9 +257,6 @@ class TestBatchMapping:
         assert vendors == []
 
 
-# --------------------------------------------------
-# Test: Vendor Validation
-# --------------------------------------------------
 class TestVendorValidation:
     """Tests for Vendor model validation."""
     
@@ -315,8 +291,6 @@ class TestVendorValidation:
         assert any("GSTIN" in e for e in errors)
 
 
-# --------------------------------------------------
 # Run Tests
-# --------------------------------------------------
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

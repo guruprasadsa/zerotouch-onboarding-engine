@@ -3,7 +3,7 @@ Canonical Vendor Data Model
 
 This module defines the vendor data structure that is independent of:
 - OCR extraction output format
-- ERP system-specific schemas (SAP, Oracle, etc.)
+- ERP system-specific schemas
 
 Design Intent:
 - Single source of truth for vendor data within the application

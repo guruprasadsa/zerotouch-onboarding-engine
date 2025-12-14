@@ -158,9 +158,7 @@ class MockERPClient(ERPClient):
             erp_reference=erp_reference
         )
     
-    # -------------------------
     # Test helper methods
-    # -------------------------
     
     def get_vendor(self, vendor_id: str) -> Optional[dict]:
         """Retrieve vendor by ID (for test verification)."""

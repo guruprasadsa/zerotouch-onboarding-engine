@@ -14,9 +14,7 @@ from src.integration.erp.mock_erp import MockERPClient
 from src.integration.erp.base import ERPErrorCode
 
 
-# --------------------------------------------------
-# Fixtures
-# --------------------------------------------------
+# Fixtures  
 @pytest.fixture
 def erp_client():
     """Create a fresh MockERPClient instance."""
@@ -59,9 +57,6 @@ def vendor_with_invalid_pan():
     )
 
 
-# --------------------------------------------------
-# Test: Successful Vendor Creation
-# --------------------------------------------------
 class TestVendorCreation:
     """Tests for successful vendor creation scenarios."""
     
@@ -106,10 +101,6 @@ class TestVendorCreation:
         response = erp_client.create_vendor(vendor)
         assert response.success is True
 
-
-# --------------------------------------------------
-# Test: Validation Errors
-# --------------------------------------------------
 class TestValidationErrors:
     """Tests for validation error handling."""
     
@@ -161,9 +152,6 @@ class TestValidationErrors:
         assert "IFSC" in response.message
 
 
-# --------------------------------------------------
-# Test: Duplicate Detection
-# --------------------------------------------------
 class TestDuplicateDetection:
     """Tests for duplicate vendor detection."""
     
@@ -224,10 +212,6 @@ class TestDuplicateDetection:
         """check_duplicate should return False for new vendor."""
         assert erp_client.check_duplicate(valid_vendor) is False
 
-
-# --------------------------------------------------
-# Test: Error Simulation
-# --------------------------------------------------
 class TestErrorSimulation:
     """Tests for simulated error scenarios."""
     
@@ -274,10 +258,6 @@ class TestErrorSimulation:
         assert response.error_code == ERPErrorCode.VALIDATION_ERROR
         assert "GSTIN" in response.message
 
-
-# --------------------------------------------------
-# Test: State Management
-# --------------------------------------------------
 class TestStateManagement:
     """Tests for client state management."""
     
@@ -306,9 +286,6 @@ class TestStateManagement:
         assert erp_client.get_vendor("VND-UNKNOWN") is None
 
 
-# --------------------------------------------------
-# Test: Response Structure
-# --------------------------------------------------
 class TestResponseStructure:
     """Tests for ERPResponse structure."""
     
@@ -333,8 +310,6 @@ class TestResponseStructure:
         assert response.erp_reference is None
 
 
-# --------------------------------------------------
 # Run Tests
-# --------------------------------------------------
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

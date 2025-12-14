@@ -6,9 +6,7 @@ import torch
 from src.core.extractor import DocumentExtractor
 
 
-# --------------------------------------------------
 # Paths
-# --------------------------------------------------
 DATA_DIR = "data"
 GT_DIR = os.path.join(DATA_DIR, "ground_truth")
 
@@ -17,9 +15,7 @@ GST_DIR = os.path.join(DATA_DIR, "gst")
 BANK_DIR = os.path.join(DATA_DIR, "bank")
 
 
-# --------------------------------------------------
 # Helpers
-# --------------------------------------------------
 def load_json(path):
     with open(path, "r") as f:
         return json.load(f)
@@ -40,7 +36,6 @@ def ocr_normalize(text):
         'O': '0', 'I': '1', 'L': '1', 'S': '5', 'B': '8', 'Z': '2', 'G': '6'
     }
     result = text.strip().upper()
-    # Only apply to alphanumeric codes - be conservative
     normalized = ""
     for c in result:
         normalized += replacements.get(c, c)
@@ -70,9 +65,8 @@ def ocr_match(gt: str, pred: str) -> bool:
     return ocr_normalize(gt) == ocr_normalize(pred)
 
 
-# --------------------------------------------------
+
 # Evaluation Logic
-# --------------------------------------------------
 def evaluate_doc_type(
     image_dir: str,
     gt_file: str,
@@ -156,16 +150,13 @@ def compute_metrics(stats):
 
     return metrics
 
-
-# --------------------------------------------------
-# Main
-# --------------------------------------------------
+#Main
 def main():
     use_gpu = torch.cuda.is_available()
     print(f"\n Initializing Extractor (GPU={use_gpu})")
     extractor = DocumentExtractor(use_gpu=use_gpu)
 
-    # ---------------- PAN ----------------
+    # PAN
     print("\n Evaluating PAN Documents...")
     pan_stats = evaluate_doc_type(
         image_dir=PAN_DIR,
@@ -179,7 +170,7 @@ def main():
     )
     pan_metrics = compute_metrics(pan_stats)
 
-    # ---------------- GST ----------------
+    # GST
     print("\n Evaluating GST Documents...")
     gst_stats = evaluate_doc_type(
         image_dir=GST_DIR,
@@ -195,7 +186,7 @@ def main():
     )
     gst_metrics = compute_metrics(gst_stats)
 
-    # ---------------- BANK ----------------
+    # BANK
     print("\n Evaluating Bank Documents...")
     bank_stats = evaluate_doc_type(
         image_dir=BANK_DIR,
@@ -209,7 +200,7 @@ def main():
     )
     bank_metrics = compute_metrics(bank_stats)
 
-    # ---------------- PRINT ----------------
+    # Print Metrics
     print("\n FINAL METRICS SUMMARY\n")
 
     print("PAN Metrics:")

@@ -36,9 +36,7 @@ class DocumentExtractor:
             spacy.cli.download("en_core_web_sm")
             self.nlp = spacy.load("en_core_web_sm")
 
-    # --------------------------------------------------
     # MAIN ENTRY
-    # --------------------------------------------------
     def extract_from_file(self, file_path: str) -> Dict[str, Any]:
         try:
             images = (
@@ -62,7 +60,6 @@ class DocumentExtractor:
 
                 page_fields = self._analyze_page(ocr, lines_text, detected_type)
 
-                # 🔥 FIX: confidence-aware merge
                 for k, v in page_fields.items():
                     if k not in all_fields or v["confidence"] > all_fields[k]["confidence"]:
                         all_fields[k] = v
@@ -90,9 +87,7 @@ class DocumentExtractor:
                 message=str(e)
             ).model_dump()
 
-    # --------------------------------------------------
     # PAGE ANALYSIS
-    # --------------------------------------------------
     def _analyze_page(self, ocr, text: str, doc_type: str) -> Dict[str, Dict]:
         fields = {}
         lines = self._group_by_lines(ocr)
@@ -203,7 +198,7 @@ class DocumentExtractor:
                         break
                 if ifsc: break
         
-        # 2. Direct pattern match (only if anchor found IFSC keyword in document)
+        # 2. Direct pattern match
         if not ifsc and ifsc_idx != -1:
             ifsc = self._find_pattern(text, r'[A-Z]{4}0[A-Z0-9]{6}', 0.95)
             
@@ -212,34 +207,29 @@ class DocumentExtractor:
     # ... [Helpers] ...
 
     def _extract_cheque_payee(self, lines, text):
-        # 0. Helper to clean titles
+        # Helper to clean titles
         def clean_name(val):
             val = re.sub(r'^(MR\.?|MRS\.?|MS\.?|M/S\.?|SHRI\.?|SMT\.?)\s*', '', val.strip(), flags=re.I).strip()
             return val
 
-        # 1. Key-Value Pairs (HIGHEST PRIORITY for structured certificates)
-        # Format might be: "Account Holder Name : {name}" OR "Account Holder Name {name}" OR separate lines
+        # Key-Value Pairs (HIGHEST PRIORITY for structured certificates)
         for anchors in [["HOLDER", "NAME"], ["ACCOUNT", "HOLDER"], ["BENEFICIARY", "NAME"], ["CUSTOMER", "NAME"], ["PAY"]]:
             idx = self._find_anchor_line_index(lines, anchors, True)
             if idx != -1:
                 txt = lines[idx]["text"]
                 val = None
                 
-                # Try same-line extraction with delimiter
                 if ":" in txt: 
                     val = txt.split(":", 1)[1].strip()
                 elif "-" in txt and "HOLDER" not in txt.split("-")[0].upper(): 
-                    # Avoid splitting "ACCOUNT-HOLDER"
                     val = txt.split("-", 1)[1].strip()
                 elif "PAY" in anchors: 
                     val = re.sub(r'PAY', '', txt, flags=re.I).strip()
                 else:
-                    # Try stripping anchor keywords (space-separated format)
-                    # e.g., "Account Holder Name RANVEER RANA" -> "RANVEER RANA"
                     remainder = txt.upper()
                     for kw in anchors:
                         remainder = re.sub(r'\b' + kw + r'\b', '', remainder, flags=re.I)
-                    # Also remove common prefixes like "Account"
+                    # remove common prefixes like "Account"
                     remainder = re.sub(r'\bACCOUNT\b', '', remainder, flags=re.I)
                     remainder = remainder.strip()
                     if len(remainder) > 2 and not re.search(r'\d', remainder):
@@ -256,7 +246,7 @@ class DocumentExtractor:
                     if len(nxt) > 2 and not re.search(r'\d', nxt) and "..." not in nxt:
                         return {"value": nxt, "confidence": lines[idx+1]["confidence"]}
             
-        # 2. Signatory (Bottom-Up)
+        # Signatory (Bottom-Up)
         sig_idx = self._find_anchor_line_index(lines, ["SIGNATORY"], True)
         if sig_idx == -1: sig_idx = self._find_anchor_line_index(lines, ["AUTHORISED"], True)
         
@@ -268,7 +258,7 @@ class DocumentExtractor:
                         if "FOR " not in val.upper() and "YOURS" not in val.upper():
                              return {"value": val, "confidence": lines[sig_idx - offset]["confidence"]}
 
-        # 3. Relative Name (S/O)
+        # Relative Name (S/O)
         for line in lines:
             txt = line["text"]
             m = re.search(r'([A-Za-z\.\s]+)\s+(S/O|D/O|W/O)\s+', txt, re.I)
@@ -277,7 +267,7 @@ class DocumentExtractor:
                 if len(val) > 3 and not re.search(r'\d', val):
                      return {"value": val, "confidence": line["confidence"]}
 
-        # 4. Anchor-based
+        # Anchor-based
         for anchors in [["CERTIFY", "THAT"], ["ACCOUNT", "OF"], ["REQUEST", "OF"]]:
             idx = self._find_anchor_line_index(lines, anchors, True)
             if idx != -1:
@@ -294,7 +284,7 @@ class DocumentExtractor:
                     if len(val) > 3 and not re.search(r'\d', val):
                          return {"value": val, "confidence": lines[idx+1]["confidence"]}
         
-        # 5. Salutation Scan
+        # Salutation Scan
         for line in lines:
             txt = line["text"].strip()
             if re.match(r'^(MR\.|MRS\.|MS\.|SHRI|SMT)\s+[A-Z\s]+$', txt, re.I):
@@ -303,7 +293,7 @@ class DocumentExtractor:
                      if "MANAGER" not in val.upper():
                          return {"value": val, "confidence": line["confidence"]}
 
-        # 6. Spacy
+        # Spacy
         if "CERTIFY" in text.upper() or "BANK" in text.upper():
             doc = self.nlp(text)
             for ent in doc.ents:
@@ -318,23 +308,23 @@ class DocumentExtractor:
     def _clean_title(self, val):
         return re.sub(r'^(MR\.?|MRS\.?|MS\.?|M/S\.?|SHRI\.?|SMT\.?)\s*', '', val.strip(), flags=re.I).strip()
 
-    # ... [Existing Methods] ...
+    # Existing Methods
 
     def _repair_ifsc_candidate(self, word: str) -> Optional[str]:
         # IFSC Format: 4 Letters + '0' + 6 Alphanumeric
         chars = list(word)
         
-        # 1. Bank Code (4 Letters)
+        # Bank Code (4 Letters)
         for i in range(4):
             if chars[i].isdigit(): chars[i] = self._digit_to_char(chars[i])
             
-        # 2. Fifth char must be '0'
+        # Fifth char must be '0'
         if chars[4] != '0':
             # Common OCR errors for 0: O, D, Q
             if chars[4] in ['O', 'D', 'Q', 'U']: chars[4] = '0'
             elif chars[4].isalpha(): chars[4] = '0' # Force 0 if letter
             
-        # 3. Branch Code (6 Alphanum) - No strict repair possible without list
+        # Branch Code (6 Alphanum)
         
         repaired = "".join(chars)
         if re.match(r'[A-Z]{4}0[A-Z0-9]{6}', repaired):
@@ -365,9 +355,7 @@ class DocumentExtractor:
                     return {"value": m.group(0), "confidence": lines[idx + 1]["confidence"]}
         return None
 
-    # --------------------------------------------------
     # HELPERS
-    # --------------------------------------------------
     def _find_pan(self, text: str) -> Optional[Dict]:
         match = re.search(r'[A-Z]{5}[0-9]{4}[A-Z]', text)
         if match:
@@ -427,12 +415,12 @@ class DocumentExtractor:
         for c in candidates:
             t = c["text"].strip()
             
-            # Strip common labels like "Name:", "NAME :"
+            # Strip common labels
             t = re.sub(r'^(NAME\s*[:\-])?\s*', '', t, flags=re.I).strip()
             
             u = t.upper()
             
-            # 1. Hard Constraints
+            # Hard Constraints
             if len(t) < 3: continue
             if re.search(r'\d', t): continue
             
@@ -440,7 +428,7 @@ class DocumentExtractor:
             if any(x in u for x in ["INCOME", "TAX", "INDIA", "GOVT", "PERMANENT", "ACCOUNT", "NUMBER", "CARD"]):
                 continue
             
-            # 2. Scorable Heuristics
+            # Scorable Heuristics
             score = 10
             # Prefer lines with typical name spacing (e.g. "FIRST LAST")
             if " " in t: score += 5
@@ -490,7 +478,7 @@ class DocumentExtractor:
                 # Extract alphanumeric only
                 clean = re.sub(r'[^A-Z0-9]', '', line_text)
                 
-                # 1. Try strict 15-char match
+                # Try strict 15-char match
                 if len(clean) >= 15:
                     # Look for pattern in the cleaned text
                     m = re.search(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', clean)
@@ -503,7 +491,7 @@ class DocumentExtractor:
                     if repaired:
                         return {"value": repaired, "confidence": lines[i]["confidence"] * 0.9}
                 
-                # 2. Try finding any 15-char alphanumeric substring
+                # Try finding any 15-char alphanumeric substring
                 for word in re.findall(r'[A-Z0-9]{15,}', clean):
                     if len(word) >= 15:
                         candidate = word[:15]
@@ -529,9 +517,9 @@ class DocumentExtractor:
         # 4. PAN Last Char (11) -> Letter
         if chars[11].isdigit(): chars[11] = self._digit_to_char(chars[11])
 
-        # 5. Entity Code (12) -> Alphanumeric (keep as is)
         
-        # 6. Default 'Z' (13) -> 'Z'
+        
+        # Default 'Z' (13) -> 'Z'
         if chars[13] == '2': chars[13] = 'Z'
             
         repaired = "".join(chars)
@@ -559,10 +547,9 @@ class DocumentExtractor:
     def _extract_gst_field(self, lines, labels, stop):
         idx = self._find_anchor_line_index(lines, labels, True)
         if idx != -1:
-            # Check same line first (e.g. "Legal Name: XXX")
+            # Check same line first
             txt = lines[idx]["text"]
-            # removing labels from text to see if value remains
-            # simplistically split by colon or just taking end of string if long enough
+            
             if ":" in txt:
                 val = txt.split(":", 1)[1].strip()
                 if len(val) > 2 and not self._fuzzy_contains(val.upper(), stop):

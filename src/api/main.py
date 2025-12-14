@@ -12,39 +12,29 @@ from src.core.schema import ExtractionResult
 from src.integration.vendor_mapper import VendorMapper
 from src.integration.erp import MockERPClient, ERPErrorCode
 
-# --------------------------------------------------
+
 # Logging (API-level)
-# --------------------------------------------------
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
-# --------------------------------------------------
 # App Init
-# --------------------------------------------------
 app = FastAPI(
     title="ZeroTouch KYC OCR Extractor API",
     version="1.0.0",
     description="Extract KYC data from documents and push to ERP systems"
 )
 
-# --------------------------------------------------
 # Initialize Services
-# --------------------------------------------------
 has_gpu = torch.cuda.is_available()
 logger.info(f"GPU Detected: {has_gpu}")
 extractor = DocumentExtractor(use_gpu=has_gpu)
 vendor_mapper = VendorMapper()
 erp_client = MockERPClient()
 
-# --------------------------------------------------
 # Allowed File Types
-# --------------------------------------------------
 ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".pdf"}
 
-
-# --------------------------------------------------
 # Response Models
-# --------------------------------------------------
 class ERPPushResponse(BaseModel):
     """Response model for ERP push endpoint."""
     extraction_status: str
@@ -57,9 +47,7 @@ class ERPPushResponse(BaseModel):
     model_config = {"exclude_none": True}
 
 
-# --------------------------------------------------
 # Routes
-# --------------------------------------------------
 @app.post("/extract", response_model=ExtractionResult, response_model_exclude_none=True)
 async def extract_document(file: UploadFile = File(...)):
     """

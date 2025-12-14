@@ -13,7 +13,7 @@ GST_DIR = os.path.join(BASE_DIR, "gst")
 BANK_DIR = os.path.join(BASE_DIR, "bank")
 GT_DIR = os.path.join(BASE_DIR, "ground_truth")
 
-FONT_PATH = "arial.ttf"  # change if missing
+FONT_PATH = "arial.ttf" 
 PAN_COUNT = 20
 GST_COUNT = 20
 BANK_COUNT = 10
@@ -34,11 +34,9 @@ def add_mild_noise(img):
     
     # Very mild noise
     arr = np.array(img)
-    noise = np.random.normal(0, 3, arr.shape)  # Reduced from 5 to 3
+    noise = np.random.normal(0, 3, arr.shape) 
     noisy = arr + noise
     noisy = np.clip(noisy, 0, 255).astype(np.uint8)
-    
-    # No blur
     return Image.fromarray(noisy)
 
 def random_pan():
@@ -51,15 +49,13 @@ def random_pan():
 
 def random_gstin():
     """Generate a valid GSTIN format: 2 digits + 5 letters + 4 digits + 1 letter + 1 alphanum + Z + 1 alphanum = 15 chars."""
-    state_code = str(random.randint(10, 35))  # 2 digits
-    pan_letters = ''.join(random.choices(string.ascii_uppercase, k=5))  # 5 letters
-    pan_digits = ''.join(random.choices(string.digits, k=4))  # 4 digits
-    pan_check = random.choice(string.ascii_uppercase)  # 1 letter
-    # Avoid ambiguous chars (0, O, 1, I, 5, S, 8, B) in entity_code for cleaner OCR
+    state_code = str(random.randint(10, 35))
+    pan_letters = ''.join(random.choices(string.ascii_uppercase, k=5))
+    pan_digits = ''.join(random.choices(string.digits, k=4))
+    pan_check = random.choice(string.ascii_uppercase)
     safe_chars = "234679ACDEFGHJKLMNPQRTUVWXYZ"
-    entity_code = random.choice(safe_chars)  # 1 alphanum
-    # Z is fixed
-    checksum = random.choice(string.ascii_uppercase)  # 1 letter
+    entity_code = random.choice(safe_chars)
+    checksum = random.choice(string.ascii_uppercase)
     return f"{state_code}{pan_letters}{pan_digits}{pan_check}{entity_code}Z{checksum}"
 
 def random_ifsc(bank_code):
@@ -85,7 +81,7 @@ BANK_CONFIG = {
 }
 
 # ---------------- PAN GENERATION ----------------
-print("🔄 Generating PAN cards...")
+print(" Generating PAN cards...")
 pan_gt = []
 
 for i in range(1, PAN_COUNT + 1):
@@ -121,7 +117,7 @@ for i in range(1, PAN_COUNT + 1):
     })
 
 # ---------------- GST GENERATION ----------------
-print("🔄 Generating GST certificates...")
+print(" Generating GST certificates...")
 gst_gt = []
 
 # Common GST registration types
@@ -166,7 +162,7 @@ for i in range(1, GST_COUNT + 1):
 
 
 # ---------------- BANK GENERATION ----------------
-print("🔄 Generating Bank documents...")
+print("Generating Bank documents...")
 bank_gt = []
 
 bank_list = list(BANK_CONFIG.keys())
@@ -225,7 +221,7 @@ with open(os.path.join(GT_DIR, "gst_ground_truth.json"), "w") as f:
 with open(os.path.join(GT_DIR, "bank_ground_truth.json"), "w") as f:
     json.dump(bank_gt, f, indent=2)
 
-print("✅ PAN, GST, and Bank images generated with ground truth JSON")
-print(f"   📁 PAN: {PAN_COUNT} files in {PAN_DIR}")
-print(f"   📁 GST: {GST_COUNT} files in {GST_DIR}")
-print(f"   📁 Bank: {BANK_COUNT} files in {BANK_DIR}")
+print(" PAN, GST, and Bank images generated with ground truth JSON")
+print(f"    PAN: {PAN_COUNT} files in {PAN_DIR}")
+print(f"    GST: {GST_COUNT} files in {GST_DIR}")
+print(f"    Bank: {BANK_COUNT} files in {BANK_DIR}")

@@ -15,9 +15,7 @@ from pathlib import Path
 from src.core.extractor import DocumentExtractor
 
 
-# --------------------------------------------------
 # Fixtures
-# --------------------------------------------------
 @pytest.fixture(scope="module")
 def extractor():
     """Create a shared extractor instance (expensive to initialize)."""
@@ -29,7 +27,7 @@ def sample_pan_path():
     """Path to a sample PAN image."""
     path = Path("data/pan/pan_01.png")
     if not path.exists():
-        pytest.skip("Sample PAN image not found. Run synth.py first.")
+        pytest.skip("Sample PAN image not found. Run scripts/synthetic_data_generator.py first.")
     return str(path)
 
 
@@ -38,7 +36,7 @@ def sample_gst_path():
     """Path to a sample GST image."""
     path = Path("data/gst/gst_01.png")
     if not path.exists():
-        pytest.skip("Sample GST image not found. Run synth.py first.")
+        pytest.skip("Sample GST image not found. Run scripts/synthetic_data_generator.py first.")
     return str(path)
 
 
@@ -47,13 +45,11 @@ def sample_bank_path():
     """Path to a sample Bank image."""
     path = Path("data/bank/bank_01.png")
     if not path.exists():
-        pytest.skip("Sample Bank image not found. Run synth.py first.")
+        pytest.skip("Sample Bank image not found. Run scripts/synthetic_data_generator.py first.")
     return str(path)
 
 
-# --------------------------------------------------
 # Test: Basic Extraction Structure
-# --------------------------------------------------
 class TestExtractionStructure:
     """Tests that extraction returns properly structured results."""
     
@@ -82,9 +78,6 @@ class TestExtractionStructure:
                     f"Confidence for {field_name} out of range: {field_data['confidence']}"
 
 
-# --------------------------------------------------
-# Test: PAN Extraction
-# --------------------------------------------------
 class TestPANExtraction:
     """Tests specific to PAN card extraction."""
     
@@ -117,7 +110,6 @@ class TestPANExtraction:
         result = extractor.extract_from_file(sample_pan_path)
         
         if result["status"] == "success":
-            # DOB extraction is not guaranteed for all documents
             if "date_of_birth" in result["fields"]:
                 dob = result["fields"]["date_of_birth"]["value"]
                 # Should be in DD/MM/YYYY or DD-MM-YYYY format
@@ -132,9 +124,6 @@ class TestPANExtraction:
                 "PAN should not have IFSC code"
 
 
-# --------------------------------------------------
-# Test: GST Extraction
-# --------------------------------------------------
 class TestGSTExtraction:
     """Tests specific to GST certificate extraction."""
     
@@ -166,10 +155,6 @@ class TestGSTExtraction:
         if result["status"] == "success":
             assert "address" in result["fields"]
 
-
-# --------------------------------------------------
-# Test: Bank Document Extraction
-# --------------------------------------------------
 class TestBankExtraction:
     """Tests specific to bank document extraction."""
     
@@ -203,10 +188,6 @@ class TestBankExtraction:
         if result["status"] == "success":
             assert "payee_name" in result["fields"]
 
-
-# --------------------------------------------------
-# Test: Error Handling
-# --------------------------------------------------
 class TestErrorHandling:
     """Tests for graceful error handling."""
     
@@ -224,9 +205,6 @@ class TestErrorHandling:
         result = extractor.extract_from_file(str(invalid_file))
         assert result["status"] == "failure"
 
-
-# --------------------------------------------------
 # Run Tests
-# --------------------------------------------------
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
