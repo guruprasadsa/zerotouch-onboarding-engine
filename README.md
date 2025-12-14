@@ -91,7 +91,7 @@ python -m src.cli --help
 
 ```bash
 # Start the API server
-uvicorn src.api.main:app --reload
+python -m uvicorn src.api.main:app --reload
 
 # Server runs at: http://localhost:8000
 # API Documentation: http://localhost:8000/docs
@@ -102,13 +102,35 @@ uvicorn src.api.main:app --reload
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/extract` | Upload document and extract fields |
+| `POST` | `/extract-and-push` | Extract and push to ERP as new vendor |
+| `GET` | `/erp/vendors` | List all created vendors |
+| `DELETE` | `/erp/vendors` | Clear all vendors |
 | `GET` | `/` | Health check |
 
-**Example API Call:**
+**Example: Extract Document**
 ```bash
 curl -X POST "http://localhost:8000/extract" \
   -F "file=@pan_card.png"
 ```
+
+**Example: Extract and Push to ERP**
+```bash
+curl -X POST "http://localhost:8000/extract-and-push" \
+  -F "file=@pan_card.png"
+```
+
+**ERP Push Response:**
+```json
+{
+  "extraction_status": "success",
+  "document_type": "PAN",
+  "erp_status": "success",
+  "vendor_id": "VND-A1B2C3D4",
+  "erp_reference": "TXN-20241214221500-E5F6",
+  "message": "Vendor 'JOHN DOE' created successfully"
+}
+```
+
 
 ### Option 3: Run Evaluation Metrics
 
