@@ -233,31 +233,30 @@ This creates:
 ```
 ZeroTouch-KYC-OCR-Extractor/
 │
-├── src/                          # Source code
-│   ├── api/                      # REST API (FastAPI)
+├── scripts/                        # Script files
+│   └── synthetic_data_generator.py # Synthetic data generator
+├── src/                            # Source code
+│   ├── api/                        # REST API (FastAPI)
 │   │   └── main.py
-│   ├── core/                     # Core extraction logic
-│   │   ├── extractor.py          # DocumentExtractor class
-│   │   ├── schema.py             # Pydantic response schemas
-│   │   └── vendor_model.py       # Vendor data model
-│   ├── integration/              # ERP integration layer
-│   │   ├── vendor_mapper.py      # OCR → Vendor mapper
-│   │   └── erp/                  # ERP client implementations
-│   ├── evaluation/               # Metrics framework
+│   ├── core/                       # Core extraction logic
+│   │   ├── extractor.py            # DocumentExtractor class
+│   │   ├── schema.py               # Pydantic response schemas
+│   │   └── vendor_model.py         # Vendor data model
+│   ├── integration/                # ERP integration layer
+│   │   ├── vendor_mapper.py        # OCR → Vendor mapper
+│   │   └── erp/                    # ERP client implementations
+│   ├── evaluation/                 # Metrics framework
 │   │   └── metrics.py
-│   ├── utils/                    # Utilities
+│   ├── utils/                      # Utilities
 │   │   └── image_utils.py
-│   └── cli.py                    # Command-line interface
+│   └── cli.py                      # Command-line interface
 │
-├── tests/                        # Unit tests
+├── tests/                          # Unit tests
 │   ├── test_extractor.py
 │   ├── test_vendor_mapper.py
 │   └── test_mock_erp.py
-│
-├── data/                         # Sample data & ground truth
-│
-├── synth.py                      # Synthetic data generator
-├── requirements.txt              # Python dependencies
+├── data/                           # Sample data & ground truth
+├── requirements.txt                # Python dependencies
 ├── .gitignore
 └── README.md
 ```
