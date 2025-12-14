@@ -153,10 +153,10 @@ data/
 
 ### Sample Data Generation
 
-Synthetic data is generated using `synth.py`:
+Synthetic data is generated using `synthetic_data_generator.py`:
 
 ```bash
-python synth.py
+python scripts/synthetic_data_generator.py
 ```
 
 This creates:
@@ -186,7 +186,8 @@ This creates:
     "legal_name": "ACME CORPORATION PVT LTD",
     "gstin": "27ABCDE1234F1Z5",
     "address": "123 MAIN STREET, MUMBAI 400001",
-    "registration_date": "01/04/2020"
+    "registration_date": "01/04/2020",
+    "registration_type": "Regular"
   }
 ]
 ```
