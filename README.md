@@ -27,7 +27,7 @@ ZeroTouch KYC OCR Extractor is an automated document extraction system designed 
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/guruprasadsa/zero-touch-KYC-OCR-extractor.git
 cd ZeroTouch-KYC-OCR-Extractor
 ```
 
