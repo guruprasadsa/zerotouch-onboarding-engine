@@ -1,5 +1,5 @@
 """
-Synthetic Data Generator for ZeroTouch KYC OCR Extractor.
+Synthetic Data Generator for Document OCR Extractor.
 Generates synthetic PAN cards, GST certificates, and Bank documents
 for training and evaluation purposes.
 

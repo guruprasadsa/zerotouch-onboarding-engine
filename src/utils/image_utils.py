@@ -1,5 +1,5 @@
 """
-Image Utilities for ZeroTouch KYC OCR Extractor.
+Image Utilities for Document OCR Extractor.
 Provides image loading, PDF conversion, and preprocessing for optimal OCR extraction.
 """
 
