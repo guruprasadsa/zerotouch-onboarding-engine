@@ -3,90 +3,90 @@
     "file": "bank_01.png",
     "document_type": "CANCELLED CHEQUE",
     "bank_name": "HDFC BANK",
-    "account_holder": "SIDDHARTH MOHAN",
-    "account_number": "465958199398",
-    "ifsc": "HDFC0355870",
-    "branch": "RAJPUR SONARPUR"
+    "account_holder": "QABIL BEDI",
+    "account_number": "869714996619",
+    "ifsc": "HDFC0563651",
+    "branch": "NADIAD"
   },
   {
     "file": "bank_02.png",
     "document_type": "BANK CERTIFICATE",
     "bank_name": "ICICI BANK",
-    "account_holder": "SAKSHAM MANDER",
-    "account_number": "814437890431",
-    "ifsc": "ICIC0146510",
-    "branch": "CHANDRAPUR"
+    "account_holder": "SIDDHARTH SHA",
+    "account_number": "371548327634",
+    "ifsc": "ICIC0657976",
+    "branch": "NAIHATI"
   },
   {
     "file": "bank_03.png",
     "document_type": "CANCELLED CHEQUE",
     "bank_name": "AXIS BANK",
-    "account_holder": "ZAYAN GANESAN",
-    "account_number": "755172857889",
-    "ifsc": "UTIB0520865",
-    "branch": "SIWAN"
+    "account_holder": "ARUNIMA SAMA",
+    "account_number": "660923810967",
+    "ifsc": "UTIB0485733",
+    "branch": "JODHPUR"
   },
   {
     "file": "bank_04.png",
     "document_type": "BANK CERTIFICATE",
     "bank_name": "CANARA BANK",
-    "account_holder": "ABHIMANYU JOSHI",
-    "account_number": "921788501187",
-    "ifsc": "CNRB0109218",
-    "branch": "SANGLI-MIRAJ & KUPWAD"
+    "account_holder": "ANIRUDH ZACHARIA",
+    "account_number": "688872864591",
+    "ifsc": "CNRB0145537",
+    "branch": "ETAWAH"
   },
   {
     "file": "bank_05.png",
     "document_type": "CANCELLED CHEQUE",
     "bank_name": "PUNJAB NATIONAL BANK",
-    "account_holder": "JALSA CHAUDHARI",
-    "account_number": "265437289085",
-    "ifsc": "PUNB0396559",
-    "branch": "ELURU"
+    "account_holder": "EKAPAD BARIA",
+    "account_number": "884941847827",
+    "ifsc": "PUNB0424723",
+    "branch": "SHAHJAHANPUR"
   },
   {
     "file": "bank_06.png",
     "document_type": "BANK CERTIFICATE",
     "bank_name": "BANK OF BARODA",
-    "account_holder": "TURVI BHAT",
-    "account_number": "942026084376",
-    "ifsc": "BARB0550695",
-    "branch": "KALYAN-DOMBIVLI"
+    "account_holder": "ANMOL DUA",
+    "account_number": "013124340837",
+    "ifsc": "BARB0908549",
+    "branch": "CUTTACK"
   },
   {
     "file": "bank_07.png",
     "document_type": "CANCELLED CHEQUE",
     "bank_name": "KOTAK MAHINDRA BANK",
-    "account_holder": "JACOB SRINIVASAN",
-    "account_number": "347446305913",
-    "ifsc": "KKBK0304528",
-    "branch": "SURAT"
+    "account_holder": "ISHWAR KAMDAR",
+    "account_number": "388577842436",
+    "ifsc": "KKBK0778995",
+    "branch": "BARDHAMAN"
   },
   {
     "file": "bank_08.png",
     "document_type": "BANK CERTIFICATE",
     "bank_name": "INDUSIND BANK",
-    "account_holder": "JYOTI KAPUR",
-    "account_number": "221355640327",
-    "ifsc": "INDB0557638",
-    "branch": "KOCHI"
+    "account_holder": "OLIVER CONTRACTOR",
+    "account_number": "560481234382",
+    "ifsc": "INDB0948470",
+    "branch": "BIJAPUR"
   },
   {
     "file": "bank_09.png",
     "document_type": "CANCELLED CHEQUE",
     "bank_name": "YES BANK",
-    "account_holder": "URISHILLA RAJ",
-    "account_number": "511675577967",
-    "ifsc": "YESB0575648",
-    "branch": "KARIMNAGAR"
+    "account_holder": "ATHARV MUNI",
+    "account_number": "209002862419",
+    "ifsc": "YESB0423697",
+    "branch": "SIKAR"
   },
   {
     "file": "bank_10.png",
     "document_type": "BANK CERTIFICATE",
     "bank_name": "STATE BANK OF INDIA",
-    "account_holder": "UNNI GOLA",
-    "account_number": "066160287995",
-    "ifsc": "SBIN0800142",
-    "branch": "AMRITSAR"
+    "account_holder": "FAQID KIBE",
+    "account_number": "135959391582",
+    "ifsc": "SBIN0636875",
+    "branch": "BARASAT"
   }
 ]

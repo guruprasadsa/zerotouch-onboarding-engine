@@ -1,122 +1,142 @@
 [
   {
     "file": "pan_01.png",
-    "name": "GAGAN DUA",
-    "pan": "ZWKUB9828S",
-    "dob": "25/01/1996"
+    "name": "ARYAN MAHARAJ",
+    "pan": "QAHPM3658E",
+    "dob": "16/08/1981",
+    "father_name": "EKARAJ CHAUDRY"
   },
   {
     "file": "pan_02.png",
-    "name": "WIDISHA TRIPATHI",
-    "pan": "EKQAI4128J",
-    "dob": "27/03/1991"
+    "name": "PAHAL BALAY",
+    "pan": "RXCPB6913B",
+    "dob": "27/12/1966",
+    "father_name": "IKBAL KAUL"
   },
   {
     "file": "pan_03.png",
-    "name": "EKTA MURTHY",
-    "pan": "ZQCWF1415R",
-    "dob": "30/07/2000"
+    "name": "RUSHIL SAINI",
+    "pan": "FNAPS3258W",
+    "dob": "18/12/1979",
+    "father_name": "LIAM AHUJA"
   },
   {
     "file": "pan_04.png",
-    "name": "FARIQ WALLA",
-    "pan": "GBKOQ1834A",
-    "dob": "04/01/1997"
+    "name": "PAHAL OAK",
+    "pan": "OFPPO0107Y",
+    "dob": "14/11/1983",
+    "father_name": "HRITIK NAYAR"
   },
   {
     "file": "pan_05.png",
-    "name": "MEKHALA KUMER",
-    "pan": "MCURG6322P",
-    "dob": "25/03/1993"
+    "name": "GEORGE RAI",
+    "pan": "SIEPR5515D",
+    "dob": "17/07/1971",
+    "father_name": "ORINDER LALLA"
   },
   {
     "file": "pan_06.png",
-    "name": "MEKHALA RANA",
-    "pan": "DZYZE2521N",
-    "dob": "04/11/1976"
+    "name": "TRIPTI YADAV",
+    "pan": "CWPPY0712X",
+    "dob": "15/06/1973",
+    "father_name": "BALVEER MEMON"
   },
   {
     "file": "pan_07.png",
-    "name": "BHAVNA VASA",
-    "pan": "VQUPJ6502O",
-    "dob": "24/09/1987"
+    "name": "REHAAN BOASE",
+    "pan": "DXCPB4804U",
+    "dob": "29/01/1968",
+    "father_name": "MAANAV BUCH"
   },
   {
     "file": "pan_08.png",
-    "name": "ONVEER MOHANTY",
-    "pan": "AUMRD3766V",
-    "dob": "31/07/1989"
+    "name": "HARRISON RAI",
+    "pan": "WPSPR0751V",
+    "dob": "17/11/1983",
+    "father_name": "QABIL GABA"
   },
   {
     "file": "pan_09.png",
-    "name": "PUSHTI BADAL",
-    "pan": "CMJMX0562V",
-    "dob": "06/01/1966"
+    "name": "ISHA KADAKIA",
+    "pan": "HCGPK1655M",
+    "dob": "16/02/1983",
+    "father_name": "FREDERICK WALLA"
   },
   {
     "file": "pan_10.png",
-    "name": "RIDHI PANCHAL",
-    "pan": "NOPSG1437U",
-    "dob": "07/12/1975"
+    "name": "NIHAL SHERE",
+    "pan": "QJJPS3433V",
+    "dob": "13/10/1990",
+    "father_name": "IMARAN NAIR"
   },
   {
     "file": "pan_11.png",
-    "name": "HEMANG BAVA",
-    "pan": "HVTKP5028K",
-    "dob": "06/02/2006"
+    "name": "VEER BALAY",
+    "pan": "YQPPB2804R",
+    "dob": "05/06/1986",
+    "father_name": "KRISH BHATTI"
   },
   {
     "file": "pan_12.png",
-    "name": "TANVEER RAM",
-    "pan": "PJFIJ2986H",
-    "dob": "02/08/1998"
+    "name": "DIVYA KALA",
+    "pan": "EJZPK9126H",
+    "dob": "07/12/1998",
+    "father_name": "VEER DHAR"
   },
   {
     "file": "pan_13.png",
-    "name": "AYAAN JOSHI",
-    "pan": "FMDZO0102B",
-    "dob": "31/10/1991"
+    "name": "LIAM KOSHY",
+    "pan": "VUFPK0526Z",
+    "dob": "28/02/2003",
+    "father_name": "TANISH RASTOGI"
   },
   {
     "file": "pan_14.png",
-    "name": "WARJAS PALL",
-    "pan": "MJASY9596G",
-    "dob": "14/02/1995"
+    "name": "THEODORE DEVI",
+    "pan": "GFYPD5156G",
+    "dob": "20/08/1999",
+    "father_name": "CHAKRADEV BATTA"
   },
   {
     "file": "pan_15.png",
-    "name": "JACK CHANDRA",
-    "pan": "QQVUR0994V",
-    "dob": "01/02/1974"
+    "name": "MICHAEL DUTTA",
+    "pan": "KXLPD4340E",
+    "dob": "08/09/1993",
+    "father_name": "REYANSH RAJ"
   },
   {
     "file": "pan_16.png",
-    "name": "ISHAAN SWAMY",
-    "pan": "WKPYY2343X",
-    "dob": "28/05/1973"
+    "name": "ZAYAN APTE",
+    "pan": "OGPPA9561M",
+    "dob": "03/10/1972",
+    "father_name": "ONKAR CHOUDHURY"
   },
   {
     "file": "pan_17.png",
-    "name": "SARTHAK WARRIOR",
-    "pan": "KHHPB0344N",
-    "dob": "03/10/1972"
+    "name": "RADHIKA DUGAR",
+    "pan": "ZDMPD0772D",
+    "dob": "02/11/1995",
+    "father_name": "KARAN TELLA"
   },
   {
     "file": "pan_18.png",
-    "name": "CHANCHAL MAMMEN",
-    "pan": "OFBVB9856Y",
-    "dob": "17/11/1982"
+    "name": "YASHICA CHERIAN",
+    "pan": "ERPPC6305M",
+    "dob": "06/07/2007",
+    "father_name": "ZEHAAN ISSAC"
   },
   {
     "file": "pan_19.png",
-    "name": "KRISHNA MAND",
-    "pan": "XYKLE8939N",
-    "dob": "12/01/1984"
+    "name": "KASHVI EDWIN",
+    "pan": "MGOPE0189V",
+    "dob": "31/08/2001",
+    "father_name": "NEEL SURESH"
   },
   {
     "file": "pan_20.png",
-    "name": "PARTH KANNAN",
-    "pan": "YVVNL8228E",
-    "dob": "16/10/1966"
+    "name": "ISAAC PATIL",
+    "pan": "RNGPP5574D",
+    "dob": "20/11/1985",
+    "father_name": "AYUSH KHOSLA"
   }
 ]

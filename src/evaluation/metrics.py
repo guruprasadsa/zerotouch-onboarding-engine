@@ -31,22 +31,15 @@ def ocr_normalize(text):
     """Normalize common OCR confusions for structured fields like GSTIN, IFSC, PAN."""
     if not text:
         return ""
-    # Common OCR confusions
     replacements = {
-        'O': '0', 'I': '1', 'L': '1', 'S': '5', 'B': '8', 'Z': '2', 'G': '6'
+        "O": "0", "I": "1", "L": "1", "S": "5",
+        "B": "8", "Z": "2", "G": "6"
     }
     result = text.strip().upper()
-    normalized = ""
-    for c in result:
-        normalized += replacements.get(c, c)
-    return normalized
+    return "".join(replacements.get(c, c) for c in result)
 
 
 def relaxed_match(gt: str, pred: str, min_overlap: float = 0.7) -> bool:
-    """
-    Relaxed matching for free-text fields like names and addresses.
-    Uses token overlap ratio.
-    """
     if not gt or not pred:
         return False
 
@@ -61,9 +54,7 @@ def relaxed_match(gt: str, pred: str, min_overlap: float = 0.7) -> bool:
 
 
 def ocr_match(gt: str, pred: str) -> bool:
-    """Match after normalizing common OCR errors."""
     return ocr_normalize(gt) == ocr_normalize(pred)
-
 
 
 # Evaluation Logic
@@ -73,15 +64,6 @@ def evaluate_doc_type(
     field_map: Dict[str, Dict],
     extractor: DocumentExtractor
 ):
-    """
-    field_map:
-    {
-        "gt_key": {
-            "pred_key": "...",
-            "mode": "strict" | "relaxed"
-        }
-    }
-    """
     gt_data = load_json(gt_file)
 
     stats = {
@@ -104,14 +86,13 @@ def evaluate_doc_type(
             )
 
             if gt_value and pred_value:
-                # Determine match based on mode
                 if mode == "strict":
                     match = gt_value == pred_value
                 elif mode == "ocr":
                     match = ocr_match(gt_value, pred_value)
-                else:  # relaxed
+                else:
                     match = relaxed_match(gt_value, pred_value)
-                
+
                 if match:
                     stats[gt_key]["TP"] += 1
                 else:
@@ -131,10 +112,14 @@ def compute_metrics(stats):
     metrics = {}
 
     for field, counts in stats.items():
-        tp, fp, fn = counts["TP"], counts["FP"], counts["FN"]
+        tp = counts["TP"]
+        fp = counts["FP"]
+        fn = counts["FN"]
 
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
         recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        accuracy = tp / (tp + fp + fn) if (tp + fp + fn) > 0 else 0.0
+
         f1 = (
             2 * precision * recall / (precision + recall)
             if (precision + recall) > 0
@@ -142,6 +127,7 @@ def compute_metrics(stats):
         )
 
         metrics[field] = {
+            "accuracy": round(accuracy, 3),
             "precision": round(precision, 3),
             "recall": round(recall, 3),
             "f1_score": round(f1, 3),
@@ -150,14 +136,15 @@ def compute_metrics(stats):
 
     return metrics
 
-#Main
+
+# Main
 def main():
     use_gpu = torch.cuda.is_available()
-    print(f"\n Initializing Extractor (GPU={use_gpu})")
+    print(f"\nInitializing Extractor (GPU={use_gpu})")
     extractor = DocumentExtractor(use_gpu=use_gpu)
 
     # PAN
-    print("\n Evaluating PAN Documents...")
+    print("\nEvaluating PAN Documents...")
     pan_stats = evaluate_doc_type(
         image_dir=PAN_DIR,
         gt_file=os.path.join(GT_DIR, "pan_ground_truth.json"),
@@ -171,7 +158,7 @@ def main():
     pan_metrics = compute_metrics(pan_stats)
 
     # GST
-    print("\n Evaluating GST Documents...")
+    print("\nEvaluating GST Documents...")
     gst_stats = evaluate_doc_type(
         image_dir=GST_DIR,
         gt_file=os.path.join(GT_DIR, "gst_ground_truth.json"),
@@ -187,7 +174,7 @@ def main():
     gst_metrics = compute_metrics(gst_stats)
 
     # BANK
-    print("\n Evaluating Bank Documents...")
+    print("\nEvaluating Bank Documents...")
     bank_stats = evaluate_doc_type(
         image_dir=BANK_DIR,
         gt_file=os.path.join(GT_DIR, "bank_ground_truth.json"),
@@ -201,7 +188,7 @@ def main():
     bank_metrics = compute_metrics(bank_stats)
 
     # Print Metrics
-    print("\n FINAL METRICS SUMMARY\n")
+    print("\nFINAL METRICS SUMMARY\n")
 
     print("PAN Metrics:")
     for k, v in pan_metrics.items():
