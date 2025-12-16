@@ -1,15 +1,17 @@
-# ZeroTouch KYC OCR Extractor
+# Document OCR Extractor (PAN/GST/Bank Parser)
 
 ## Project Overview
 
-ZeroTouch KYC OCR Extractor is an automated document extraction system designed for vendor onboarding workflows. It extracts structured data from Indian KYC documents using OCR (Optical Character Recognition) and rule-based logic.
+Document OCR Extractor is an automated document extraction system designed for vendor onboarding workflows. It extracts structured data from Indian KYC documents using OCR (Optical Character Recognition) and rule-based logic.
 
 **Supported Document Types:**
+
 - **PAN Card** - Extracts PAN number, name, date of birth
 - **GST Certificate** - Extracts GSTIN, legal name, address, registration type
 - **Bank Documents** - Extracts account number, IFSC code, account holder name
 
 **Key Capabilities:**
+
 - ≥90% field-level extraction accuracy
 - Confidence scores (0.0-1.0) for each extracted field
 - Multiple interfaces: CLI and REST API (FastAPI)
@@ -21,17 +23,20 @@ ZeroTouch KYC OCR Extractor is an automated document extraction system designed 
 ## Environment Setup
 
 ### Prerequisites
+
 - Python 3.10 or higher
 - pip (Python package manager)
 - GPU with CUDA (optional, for faster processing)
 
 ### Step 1: Clone the Repository
+
 ```bash
 git clone https://github.com/guruprasadsa/zero-touch-KYC-OCR-extractor.git
 cd ZeroTouch-KYC-OCR-Extractor
 ```
 
 ### Step 2: Create Virtual Environment
+
 ```bash
 # Windows
 python -m venv .venv
@@ -43,6 +48,7 @@ source .venv/bin/activate
 ```
 
 ### Step 3: Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -108,18 +114,21 @@ python -m uvicorn src.api.main:app --reload
 | `GET` | `/` | Health check |
 
 **Example: Extract Document**
+
 ```bash
 curl -X POST "http://localhost:8000/extract" \
   -F "file=@pan_card.png"
 ```
 
 **Example: Extract and Push to ERP**
+
 ```bash
 curl -X POST "http://localhost:8000/extract-and-push" \
   -F "file=@pan_card.png"
 ```
 
 **ERP Push Response:**
+
 ```json
 {
   "extraction_status": "success",
@@ -130,7 +139,6 @@ curl -X POST "http://localhost:8000/extract-and-push" \
   "message": "Vendor 'JOHN DOE' created successfully"
 }
 ```
-
 
 ### Option 3: Run Evaluation Metrics
 
@@ -153,6 +161,7 @@ python -m pytest tests/ -v
 The `data/` folder contains synthetic test documents and ground truth labels for evaluation.
 
 ### Folder Structure
+
 ```
 data/
 ├── pan/                      # 20 synthetic PAN card images
@@ -182,6 +191,7 @@ python scripts/synthetic_data_generator.py
 ```
 
 This creates:
+
 - Synthetic document images with randomized names, IDs, and dates
 - Corresponding ground truth JSON files for accuracy evaluation
 - Mild noise and rotation to simulate real-world scanning conditions
@@ -189,6 +199,7 @@ This creates:
 ### Ground Truth Format
 
 **PAN Ground Truth Example (`pan_ground_truth.json`):**
+
 ```json
 [
   {
@@ -201,6 +212,7 @@ This creates:
 ```
 
 **GST Ground Truth Example (`gst_ground_truth.json`):**
+
 ```json
 [
   {
@@ -215,6 +227,7 @@ This creates:
 ```
 
 **Bank Ground Truth Example (`bank_ground_truth.json`):**
+
 ```json
 [
   {
@@ -231,7 +244,7 @@ This creates:
 ## Project Structure
 
 ```
-ZeroTouch-KYC-OCR-Extractor/
+Document-OCR-Extractor/
 │
 ├── scripts/                        # Script files
 │   └── synthetic_data_generator.py # Synthetic data generator

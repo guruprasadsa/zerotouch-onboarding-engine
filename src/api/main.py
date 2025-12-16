@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 # App Init
 app = FastAPI(
-    title="ZeroTouch KYC OCR Extractor API",
+    title="Document OCR Extractor API",
     version="1.0.0",
-    description="Extract KYC data from documents and push to ERP systems"
+    description="Extract data from documents and push to ERP systems"
 )
 
 # Initialize Services
@@ -51,7 +51,7 @@ class ERPPushResponse(BaseModel):
 @app.post("/extract", response_model=ExtractionResult, response_model_exclude_none=True)
 async def extract_document(file: UploadFile = File(...)):
     """
-    Extract structured data from a KYC document.
+    Extract structured data from a document.
     
     Supports: PAN Card, GST Certificate, Bank Documents (Cheque/Certificate)
     """
@@ -231,7 +231,7 @@ async def clear_vendors():
 @app.get("/")
 def health_check():
     return {
-        "service": "ZeroTouch KYC OCR Extractor",
+        "service": "Document OCR Extractor",
         "status": "running",
         "version": "1.0.0",
         "erp_connected": erp_client.health_check(),
