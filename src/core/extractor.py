@@ -125,12 +125,12 @@ class DocumentExtractor:
                 fields["date_of_birth"] = date
 
         elif doc_type == "GST":
-            # GSTIN - Multi-strategy extraction (Layout, ML, Regex)
+            # GSTIN
             gstin = self._extract_gstin_comprehensive(lines, text, ocr)
             if gstin:
                 fields["gstin"] = gstin
 
-            # Legal Name (Try multiple anchors)
+            # Legal Name
             legal = self._extract_gst_field(lines, ["LEGAL", "NAME"], ["TRADE", "ADDRESS", "CONSTITUTION"])
             if not legal:
                 legal = self._extract_gst_field(lines, ["TRADE", "NAME"], ["ADDRESS", "CONSTITUTION"])
@@ -191,7 +191,7 @@ class DocumentExtractor:
         """Extract IFSC code - only for bank documents."""
         ifsc = None
         
-        # 1. Anchor-based (HIGHEST PRIORITY)
+        # Anchor-based
         ifsc_idx = self._find_anchor_line_index(lines, ["IFSC", "CODE"], True)
         if ifsc_idx == -1: 
             ifsc_idx = self._find_anchor_line_index(lines, ["IFSC"], True)
@@ -214,7 +214,6 @@ class DocumentExtractor:
                     ifsc = {"value": loc_match.group(0), "confidence": lines[i]["confidence"]}
                     break
                 
-                # Try repair on 11-char candidates
                 for match in re.finditer(r'[A-Z0-9]{11}', clean_line):
                     candidate = match.group(0)
                     repaired = self._repair_ifsc_candidate(candidate)
@@ -223,7 +222,7 @@ class DocumentExtractor:
                         break
                 if ifsc: break
         
-        # 2. Direct pattern match
+        # Direct pattern match
         if not ifsc and ifsc_idx != -1:
             ifsc = self._find_pattern(text, r'[A-Z]{4}0[A-Z0-9]{6}', 0.95)
             
@@ -455,7 +454,6 @@ class DocumentExtractor:
             if ":" in line_text:
                 val = line_text.split(":", 1)[1].strip()
                 if len(val) > 2 and not re.search(r'\d', val):
-                    # Skip if it's "Father's Name"
                     if "FATHER" not in line_text.upper():
                         return {"value": val, "confidence": lines[name_idx]["confidence"]}
             
@@ -664,13 +662,7 @@ class DocumentExtractor:
 
     def _find_gstin_fuzzy(self, text: str) -> Optional[dict]:
         """Fuzzy regex search for GSTIN-like patterns."""
-        # Pattern allowing common OCR errors: 0/O, 1/I/L, 2/Z, 5/S, 8/B
-        # State: 2 chars (digits or confusions)
-        # PAN: 5 chars (letters or confusions)
-        # PAN Digits: 4 chars (digits or confusions)
-        # ...
-        
-        # Simplified fuzzy scan: Look for 15-char block with sufficient structure
+        # Simplified fuzzy scan
         candidates = re.findall(r'[A-Z0-9OIZSBL]{15}', text.upper())
         for cand in candidates:
             repaired = self._repair_gstin_candidate(cand)
@@ -683,7 +675,7 @@ class DocumentExtractor:
         # Clean text for pattern matching
         clean_text = text.upper()
         
-        # Try strict pattern first
+        # strict pattern
         m = re.search(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', clean_text)
         if m:
             return {"value": m.group(0), "confidence": 0.98}
@@ -692,7 +684,6 @@ class DocumentExtractor:
     
     def _find_gstin_spaced(self, text: str) -> Optional[dict]:
         """Handle GSTIN with spaces inserted by OCR."""
-        # Pattern: 2 digits, 5 letters, 4 digits, 1 letter, 1 alphanum, Z, 1 alphanum
         # Allow spaces between characters
         spaced_pattern = (
             r'(\d)\s*(\d)\s*'  # State code
@@ -857,13 +848,9 @@ class DocumentExtractor:
                  res = self._repair_gstin_15char(word + suffix)
                  if res and self._validate_gstin_checksum(res): return res
              return None
-
-        # 15-char: Try brute-force variants for ambiguity
         repaired = self._repair_gstin_15char(word)
         if repaired and self._validate_gstin_checksum(repaired):
             return repaired
-            
-        # Generate variants for Q/O, Z/7, etc.
         variants = self._generate_gstin_variants(repaired or word)
         for cand in variants:
             if self._validate_gstin_checksum(cand) and re.match(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', cand):
@@ -873,31 +860,22 @@ class DocumentExtractor:
     
     def _repair_gstin_15char(self, word: str) -> Optional[str]:
         """Repair 15-char GSTIN candidate with multiple strategies."""
-        # Try Z→7 (more common at digit positions in GSTIN)
         c1 = self._try_repair_gstin(word, use_z_as_7=True)
         if c1 and self._validate_gstin_checksum(c1): return c1
-        
-        # Fall back to Z→2 (also valid in some cases)
         c2 = self._try_repair_gstin(word, use_z_as_7=False)
         if c2 and self._validate_gstin_checksum(c2): return c2
-            
-        # Try G→9 (fixes specific font confusion where 9 looks like G)
         c3 = self._try_repair_gstin(word, use_z_as_7=True, use_g_as_9=True)
         if c3 and self._validate_gstin_checksum(c3): return c3
-        
-        # Fallback: Return format-valid candidate even if checksum fails
         return c1 or c2
     
     def _try_repair_gstin(self, word: str, use_z_as_7: bool = False, use_g_as_9: bool = False) -> Optional[str]:
         """Single repair attempt with specified mappings."""
         chars = list(word.upper())
         
-        # OCR digit mappings - Z can be 2 or 7 depending on context
         if use_z_as_7:
             digit_map = {'O':'0', 'I':'1', 'L':'1', 'S':'5', 'B':'8', 'Z':'7', 'G':'6', 'D':'0', 'Q':'0', 'T':'7'}
         else:
             digit_map = {'O':'0', 'I':'1', 'L':'1', 'S':'5', 'B':'8', 'Z':'2', 'G':'6', 'D':'0', 'Q':'0', 'T':'7'}
-            
         if use_g_as_9:
             digit_map['G'] = '9'
         
@@ -956,8 +934,7 @@ class DocumentExtractor:
         # 11 (PAN Check): Q<->0, O<->0
         # 12 (Entity): Z<->7, Z<->2
         # 14 (Check): O<->0
-        
-        # We can't try all 2^N combinations. We focus on likely errors.
+
         candidates = set([word])
         chars = list(word)
         

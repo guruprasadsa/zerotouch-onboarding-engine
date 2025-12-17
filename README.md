@@ -61,7 +61,6 @@ pip install -r requirements.txt
 |---------|---------|---------|
 | `easyocr` | 1.7+ | OCR engine for text extraction |
 | `opencv-python` | 4.8+ | Image preprocessing and enhancement |
-| `Pillow` | 10.0+ | Image loading and manipulation |
 | `numpy` | 1.24+ | Numerical operations |
 | `torch` | 2.0+ | Deep learning backend for EasyOCR |
 | `fastapi` | 0.100+ | REST API framework |
@@ -79,17 +78,44 @@ pip install -r requirements.txt
 
 ### Option 1: Command Line Interface (CLI)
 
+The CLI provides two subcommands: `extract` for single document processing and `evaluate` for running metrics.
+
+**Extract Command:**
+
 ```bash
 # Basic extraction (human-readable output)
-python -m src.cli path/to/document.png
+python -m src.cli extract data/pan/pan_01.png
 
 # JSON output for automation
-python -m src.cli path/to/document.png --output json
+python -m src.cli extract data/pan/pan_01.png --output json
 
 # Enable GPU acceleration
-python -m src.cli path/to/document.png --gpu
+python -m src.cli extract data/pan/pan_01.png --gpu
 
-# View all options
+# View extract options
+python -m src.cli extract --help
+```
+
+**Evaluate Command:**
+
+```bash
+# Evaluate all document types
+python -m src.cli evaluate
+
+# Evaluate specific document type
+python -m src.cli evaluate --doc-type pan
+python -m src.cli evaluate --doc-type gst
+python -m src.cli evaluate --doc-type bank
+
+# JSON output for automation
+python -m src.cli evaluate --output json
+
+# View evaluate options
+python -m src.cli evaluate --help
+```
+
+```bash
+# View all CLI options
 python -m src.cli --help
 ```
 
@@ -117,14 +143,14 @@ python -m uvicorn src.api.main:app --reload
 
 ```bash
 curl -X POST "http://localhost:8000/extract" \
-  -F "file=@pan_card.png"
+  -F "file=@data/pan/pan_01.png"
 ```
 
 **Example: Extract and Push to ERP**
 
 ```bash
 curl -X POST "http://localhost:8000/extract-and-push" \
-  -F "file=@pan_card.png"
+  -F "file=@data/pan/pan_01.png"
 ```
 
 **ERP Push Response:**
@@ -143,7 +169,10 @@ curl -X POST "http://localhost:8000/extract-and-push" \
 ### Option 3: Run Evaluation Metrics
 
 ```bash
-# Evaluate extraction accuracy against ground truth
+# Via CLI (recommended)
+python -m src.cli evaluate
+
+# Or directly via metrics module
 python -m src.evaluation.metrics
 ```
 
@@ -269,6 +298,10 @@ Document-OCR-Extractor/
 │   ├── test_vendor_mapper.py
 │   └── test_mock_erp.py
 ├── data/                           # Sample data & ground truth
+│   ├── pan/
+│   ├── gst/
+│   ├── bank/
+│   └── ground_truth/
 ├── requirements.txt                # Python dependencies
 ├── .gitignore
 └── README.md
