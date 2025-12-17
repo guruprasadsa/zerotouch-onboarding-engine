@@ -31,8 +31,8 @@ Document OCR Extractor is an automated document extraction system designed for v
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/guruprasadsa/zero-touch-KYC-OCR-extractor.git
-cd ZeroTouch-KYC-OCR-Extractor
+git clone https://github.com/guruprasadsa/Document-OCR-extractor.git
+cd Document-OCR-extractor
 ```
 
 ### Step 2: Create Virtual Environment
@@ -287,6 +287,8 @@ Document-OCR-Extractor/
 │   ├── integration/                # ERP integration layer
 │   │   ├── vendor_mapper.py        # OCR → Vendor mapper
 │   │   └── erp/                    # ERP client implementations
+│   │   └── base.py                 # Base class for ERP clients
+│   │   └── mock_erp.py             # Mock ERP client for Demo
 │   ├── evaluation/                 # Metrics framework
 │   │   └── metrics.py
 │   ├── utils/                      # Utilities
