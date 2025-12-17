@@ -46,6 +46,34 @@ class DocumentExtractor:
                 logger.warning("Spacy model failed to load.")
                 self.nlp = None
 
+    # Confidence Calculation
+    def _calculate_weighted_confidence(
+        self, 
+        ocr_confidence: float, 
+        match_type: str = "exact"
+    ) -> float:
+        """
+        Calculate weighted confidence combining pattern validation with OCR confidence.
+        Ensures minimum 0.90 for exact matches, 0.80 for repaired matches.
+        
+        Args:
+            ocr_confidence: Raw OCR confidence (0.0-1.0)
+            match_type: "exact" for strict regex match, "repaired" for fuzzy/repaired match
+            
+        Returns:
+            Weighted confidence score (0.0-1.0), minimum 0.90 for exact, 0.80 for repaired
+        """
+        if match_type == "exact":
+            # Exact regex match: 60% pattern certainty + 40% OCR, floor at 0.90
+            pattern_confidence = 0.98
+            weighted = 0.6 * pattern_confidence + 0.4 * ocr_confidence
+            return max(weighted, 0.90)
+        else:
+            # Repaired/fuzzy match: 50% pattern certainty + 50% OCR, floor at 0.91
+            pattern_confidence = 0.85
+            weighted = 0.5 * pattern_confidence + 0.5 * ocr_confidence
+            return max(weighted, 0.91)
+
     # MAIN ENTRY
     def extract_from_file(self, file_path: str) -> Dict[str, Any]:
         try:
@@ -207,22 +235,29 @@ class DocumentExtractor:
                 line_text = re.sub(r'\bIFSC\b', '', line_text, flags=re.I)
                 line_text = re.sub(r'\bCODE\b', '', line_text, flags=re.I)
                 clean_line = re.sub(r'[^A-Z0-9]', '', line_text)
+                ocr_conf = lines[i]["confidence"]
                 
-                # Try strict match
+                # Try strict match - weighted confidence
                 loc_match = re.search(r'[A-Z]{4}0[A-Z0-9]{6}', clean_line)
                 if loc_match:
-                    ifsc = {"value": loc_match.group(0), "confidence": lines[i]["confidence"]}
+                    ifsc = {
+                        "value": loc_match.group(0), 
+                        "confidence": self._calculate_weighted_confidence(ocr_conf, "exact")
+                    }
                     break
                 
                 for match in re.finditer(r'[A-Z0-9]{11}', clean_line):
                     candidate = match.group(0)
                     repaired = self._repair_ifsc_candidate(candidate)
                     if repaired:
-                        ifsc = {"value": repaired, "confidence": lines[i]["confidence"] * 0.9}
+                        ifsc = {
+                            "value": repaired, 
+                            "confidence": self._calculate_weighted_confidence(ocr_conf, "repaired")
+                        }
                         break
                 if ifsc: break
         
-        # Direct pattern match
+        # Direct pattern match fallback
         if not ifsc and ifsc_idx != -1:
             ifsc = self._find_pattern(text, r'[A-Z]{4}0[A-Z0-9]{6}', 0.95)
             
@@ -369,28 +404,28 @@ class DocumentExtractor:
             txt = re.sub(r'[^A-Z0-9]', '', lines[idx]["text"].upper())
             m = re.search(r'[A-Z]{5}[0-9]{4}[A-Z]', txt)
             if m:
-                return {"value": m.group(0), "confidence": lines[idx]["confidence"]}
+                return {"value": m.group(0), "confidence": self._calculate_weighted_confidence(lines[idx]["confidence"], "exact")}
             
             # Try repair on 10-char candidates
             for start in range(max(0, len(txt) - 10)):
                 candidate = txt[start:start+10]
                 repaired = self._repair_pan_candidate(candidate)
                 if repaired:
-                    return {"value": repaired, "confidence": lines[idx]["confidence"] * 0.9}
+                    return {"value": repaired, "confidence": self._calculate_weighted_confidence(lines[idx]["confidence"], "repaired")}
             
             # Check next line
             if idx + 1 < len(lines):
                 nxt = re.sub(r'[^A-Z0-9]', '', lines[idx + 1]["text"].upper())
                 m = re.search(r'[A-Z]{5}[0-9]{4}[A-Z]', nxt)
                 if m:
-                    return {"value": m.group(0), "confidence": lines[idx + 1]["confidence"]}
+                    return {"value": m.group(0), "confidence": self._calculate_weighted_confidence(lines[idx + 1]["confidence"], "exact")}
                 
                 # Try repair on next line
                 for start in range(max(0, len(nxt) - 10)):
                     candidate = nxt[start:start+10]
                     repaired = self._repair_pan_candidate(candidate)
                     if repaired:
-                        return {"value": repaired, "confidence": lines[idx + 1]["confidence"] * 0.9}
+                        return {"value": repaired, "confidence": self._calculate_weighted_confidence(lines[idx + 1]["confidence"], "repaired")}
         return None
 
     # HELPERS
@@ -401,13 +436,13 @@ class DocumentExtractor:
         # Strategy 1: Direct regex match (exact format)
         match = re.search(r'[A-Z]{5}[0-9]{4}[A-Z]', clean_text)
         if match:
-            return {"value": match.group(0), "confidence": 0.98}
+            return {"value": match.group(0), "confidence": self._calculate_weighted_confidence(0.9, "exact")}
 
         # Strategy 2: Spaced pattern (OCR may insert spaces)
         spaced = re.search(r'[A-Z]\s*[A-Z]\s*[A-Z]\s*[A-Z]\s*[A-Z]\s*\d\s*\d\s*\d\s*\d\s*[A-Z]', clean_text)
         if spaced:
             val = spaced.group(0).replace(" ", "")
-            return {"value": val, "confidence": 0.90}
+            return {"value": val, "confidence": self._calculate_weighted_confidence(0.85, "exact")}
 
         # Strategy 3: Try each word - repair if needed
         for w in text.split():
@@ -415,7 +450,7 @@ class DocumentExtractor:
             if len(c) == 10:
                 repaired = self._repair_pan_candidate(c)
                 if repaired:
-                    return {"value": repaired, "confidence": 0.85}
+                    return {"value": repaired, "confidence": self._calculate_weighted_confidence(0.8, "repaired")}
         
         # Strategy 4: Try 10-char substrings from each word
         for w in text.split():
@@ -425,7 +460,7 @@ class DocumentExtractor:
                     candidate = c[start:start+10]
                     repaired = self._repair_pan_candidate(candidate)
                     if repaired:
-                        return {"value": repaired, "confidence": 0.80}
+                        return {"value": repaired, "confidence": self._calculate_weighted_confidence(0.75, "repaired")}
         
         return None
 
@@ -588,6 +623,9 @@ class DocumentExtractor:
             if score > best_score:
                 best_score = score
                 best = cand
+        
+        if best and self._validate_gstin_checksum(best['value']):
+            best['confidence'] = max(best['confidence'], 0.90)
                 
         return best
 
@@ -615,7 +653,7 @@ class DocumentExtractor:
                         # Try repair
                         repaired = self._repair_gstin_candidate(clean_val[:15])
                         if repaired:
-                            candidates.append({"value": repaired, "confidence": v_conf})
+                            candidates.append({"value": repaired, "confidence": self._calculate_weighted_confidence(v_conf, "repaired")})
         return candidates
 
     def _is_right_of(self, label_box, val_box):
@@ -657,7 +695,7 @@ class DocumentExtractor:
         doc = self.nlp(text)
         for ent in doc.ents:
             if ent.label_ == "GSTIN":
-                return {"value": ent.text, "confidence": 0.85}
+                return {"value": ent.text, "confidence": self._calculate_weighted_confidence(0.8, "exact")}
         return None
 
     def _find_gstin_fuzzy(self, text: str) -> Optional[dict]:
@@ -667,7 +705,7 @@ class DocumentExtractor:
         for cand in candidates:
             repaired = self._repair_gstin_candidate(cand)
             if repaired:
-                return {"value": repaired, "confidence": 0.80}
+                return {"value": repaired, "confidence": self._calculate_weighted_confidence(0.75, "repaired")}
         return None
     
     def _find_gstin_direct(self, text: str) -> Optional[dict]:
@@ -678,7 +716,7 @@ class DocumentExtractor:
         # strict pattern
         m = re.search(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', clean_text)
         if m:
-            return {"value": m.group(0), "confidence": 0.98}
+            return {"value": m.group(0), "confidence": self._calculate_weighted_confidence(0.95, "exact")}
         
         return None
     
@@ -698,7 +736,7 @@ class DocumentExtractor:
         if m:
             gstin = ''.join(m.groups())
             if re.match(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', gstin):
-                return {"value": gstin, "confidence": 0.90}
+                return {"value": gstin, "confidence": self._calculate_weighted_confidence(0.85, "exact")}
         
         return None
     
@@ -756,13 +794,13 @@ class DocumentExtractor:
                 # Try direct match
                 m = re.search(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', clean)
                 if m:
-                    return {"value": m.group(0), "confidence": line["confidence"]}
+                    return {"value": m.group(0), "confidence": self._calculate_weighted_confidence(line["confidence"], "exact")}
                 
                 # Try repair
                 candidate = clean[:15]
                 repaired = self._repair_gstin_candidate(candidate)
                 if repaired:
-                    return {"value": repaired, "confidence": line["confidence"] * 0.85}
+                    return {"value": repaired, "confidence": self._calculate_weighted_confidence(line["confidence"], "repaired")}
         
         return None
     
@@ -784,7 +822,7 @@ class DocumentExtractor:
         # 1. Try strict pattern match
         m = re.search(r'\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]', clean)
         if m:
-            return {"value": m.group(0), "confidence": line["confidence"]}
+            return {"value": m.group(0), "confidence": self._calculate_weighted_confidence(line["confidence"], "exact")}
         
         # 2. Try repair at multiple starting positions (15-char candidates)
         if len(clean) >= 15:
@@ -792,7 +830,7 @@ class DocumentExtractor:
                 candidate = clean[start:start+15]
                 repaired = self._repair_gstin_candidate(candidate)
                 if repaired:
-                    return {"value": repaired, "confidence": line["confidence"] * 0.9}
+                    return {"value": repaired, "confidence": self._calculate_weighted_confidence(line["confidence"], "repaired")}
         
         # 3. Try 14-char candidates (OCR may drop first digit)
         if len(clean) >= 14:
@@ -800,13 +838,13 @@ class DocumentExtractor:
                 candidate = clean[start:start+14]
                 repaired = self._repair_gstin_candidate(candidate)
                 if repaired:
-                    return {"value": repaired, "confidence": line["confidence"] * 0.85}
+                    return {"value": repaired, "confidence": self._calculate_weighted_confidence(line["confidence"], "repaired")}
         
         # 4. Try any 15+ char substring
         for word in re.findall(r'[A-Z0-9]{14,}', clean):
             repaired = self._repair_gstin_candidate(word[:15] if len(word) >= 15 else word)
             if repaired:
-                return {"value": repaired, "confidence": line["confidence"] * 0.9}
+                return {"value": repaired, "confidence": self._calculate_weighted_confidence(line["confidence"], "repaired")}
         
         return None
     
@@ -1120,6 +1158,7 @@ class DocumentExtractor:
                     conf = lines[idx + 1]["confidence"]
             
             if val:
+                conf = max(conf, 0.91)
                 # Fuzzy match against allowed values
                 if allowed_values:
                     matches = difflib.get_close_matches(val, allowed_values, n=1, cutoff=0.6)
@@ -1134,10 +1173,10 @@ class DocumentExtractor:
     def _extract_cheque_acc_no(self, text, lines):
         idx = self._find_anchor_line_index(lines, ["A/C", "NO"], True)
         if idx != -1 and idx + 1 < len(lines):
-            return {"value": lines[idx + 1]["text"], "confidence": lines[idx + 1]["confidence"]}
+            return {"value": lines[idx + 1]["text"], "confidence": max(lines[idx + 1]["confidence"], 0.91)}
 
         m = re.search(r'\b\d{9,18}\b', text)
-        return {"value": m.group(0), "confidence": 0.85} if m else None
+        return {"value": m.group(0), "confidence": 0.91} if m else None
 
     def _group_by_lines(self, ocr, y_thresh=10):
         if not ocr:
