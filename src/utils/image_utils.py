@@ -17,7 +17,7 @@ def load_image_from_path(path: str) -> Image.Image:
 # PDF Conversion
 def convert_pdf_to_images(pdf_path: str, zoom: float = 2.0) -> List[np.ndarray]:
     """
-    Convert a PDF file to a list of images (numpy arrays, BGR format).
+    Convert a PDF file to a list of images.
     """
     images = []
     try:

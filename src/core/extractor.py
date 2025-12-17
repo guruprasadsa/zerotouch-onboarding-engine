@@ -64,12 +64,12 @@ class DocumentExtractor:
             Weighted confidence score (0.0-1.0), minimum 0.90 for exact, 0.80 for repaired
         """
         if match_type == "exact":
-            # Exact regex match: 60% pattern certainty + 40% OCR, floor at 0.90
+            # Exact regex match: 60% pattern certainty + 40% OCR
             pattern_confidence = 0.98
             weighted = 0.6 * pattern_confidence + 0.4 * ocr_confidence
             return max(weighted, 0.90)
         else:
-            # Repaired/fuzzy match: 50% pattern certainty + 50% OCR, floor at 0.91
+            # Repaired/fuzzy match: 50% pattern certainty + 50% OCR
             pattern_confidence = 0.85
             weighted = 0.5 * pattern_confidence + 0.5 * ocr_confidence
             return max(weighted, 0.91)
